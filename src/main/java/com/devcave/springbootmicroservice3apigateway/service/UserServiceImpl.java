@@ -3,6 +3,7 @@ package com.devcave.springbootmicroservice3apigateway.service;
 import com.devcave.springbootmicroservice3apigateway.model.Role;
 import com.devcave.springbootmicroservice3apigateway.model.User;
 import com.devcave.springbootmicroservice3apigateway.repository.UserRepository;
+import com.devcave.springbootmicroservice3apigateway.security.jwt.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,13 +21,20 @@ public class UserServiceImpl implements UserService{
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private JwtProvider jwtProvider;
+
     @Override
     public User saveUser(User user){
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(Role.USER);
         user.setFechaCreacion(LocalDateTime.now());
+        User userCreated = userRepository.save(user);
 
-        return userRepository.save(user);
+        String jwt = jwtProvider.generateToken(userCreated);
+        userCreated.setToken(jwt);
+
+        return userCreated;
     }
 
     @Override

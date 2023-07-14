@@ -1,5 +1,6 @@
 package com.devcave.springbootmicroservice3apigateway.security.jwt;
 
+import com.devcave.springbootmicroservice3apigateway.model.User;
 import com.devcave.springbootmicroservice3apigateway.security.UserPrincipal;
 import com.devcave.springbootmicroservice3apigateway.utils.SecurityUtils;
 import io.jsonwebtoken.Claims;
@@ -47,6 +48,18 @@ public class JwtProviderImpl implements JwtProvider {
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
 
+    }
+
+    @Override
+    public String generateToken(User user){
+        Key key = Keys.hmacShaKeyFor(JWT_SECRET.getBytes(StandardCharsets.UTF_8));
+        return Jwts.builder()
+                .setSubject(user.getUsername())
+                .claim("roles", user.getRole())
+                .claim("userId", user.getId())
+                .setExpiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION_IN_MS))
+                .signWith(key, SignatureAlgorithm.HS512)
+                .compact();
     }
 
     @Override
