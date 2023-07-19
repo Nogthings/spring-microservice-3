@@ -11,7 +11,7 @@ import java.util.List;
 @FeignClient(
         value = "compra-service",
         path = "api/compra",
-        url = "${compra.service.url}",
+        //url = "${compra.service.url}",
         configuration = FeignConfiguration.class
 )
 public interface CompraServiceRequest {
@@ -19,7 +19,7 @@ public interface CompraServiceRequest {
     @PostMapping
     Object saveCompra(@RequestBody Object requestBody);
 
-    @GetMapping("${userId}")
+    @GetMapping("{userId}")
     List<Object> getAllComprasOfUser(@PathVariable("userId") Long userId);
 
 }
